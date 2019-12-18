@@ -1,4 +1,5 @@
 #!/bin/bash
+
 export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client
 
 while getopts 'u:p:t:a:h' OPT; do
@@ -12,16 +13,16 @@ while getopts 'u:p:t:a:h' OPT; do
     esac
 done
 
-if [[ $USER -eq "" ]];then
+if [ -z "$USER" ]; then
     PRINT_HELP=1
 fi
-if [[ $PASS -eq "" ]]; then
+if [ -z "$PASS" ]; then
     PRINT_HELP=1
 fi
-if [[ $TYPE -eq "" ]]; then
+if [ -z "$TYPE" ]; then
     PRINT_HELP=1
 fi
-if [[ $AFFILIATION -eq "" ]]; then
+if [ -z "$AFFILIATION" ]; then
     PRINT_HELP=1
 fi
 
@@ -29,10 +30,10 @@ if [[ $PRINT_HELP -eq 1 ]]; then
     echo "Usage: `basename $0` -u -p -t -a"
     echo "    -u register user"
     echo "    -p register password"
-    echo "    -t register type"
+    echo "    -t register type(e.g. 'peer, app, user, client')"
     echo "    -a register affiliation"
 fi
-exit
+
 set -x
 ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client register --id.type ${TYPE} --id.name ${USER} --id.secret ${PASS} --id.affiliation ${AFFILIATION} --id.attrs '"hf.Registrar.Roles=peer,user","hf.Revoker=true"'
 res=$?
