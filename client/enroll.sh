@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client/ca-files
+export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client
 
 echo -n "Enter user:"
 read USER
@@ -20,10 +20,10 @@ for i in "$*"; do
 done
 
 set -x
-./fabric-ca-client enroll -u ${HTTP}://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/${USER} ${TLS}
+./fabric-ca-client enroll -u ${HTTP}://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/${USER}/msp ${TLS}
 res=$?
 set +x
 
 if [ $res -ne 0 ];then
-    rm -rf ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client-config.yaml ${FABRIC_CA_CLIENT_HOME}/admin/
+    rm -rf ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client-config.yaml ${FABRIC_CA_CLIENT_HOME}/${USER}/msp
 fi

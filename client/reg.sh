@@ -1,20 +1,40 @@
 #!/bin/bash
+export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client
 
-CLIENT_HOME=/home/vagrant/fabric-ca/client
+while getopts 'u:p:t:a:h' OPT; do
+    case $OPT in
+        u) USER="$OPTARG";;
+        p) PASS="$OPTARG";;
+        t) TYPE="$OPTARG";;
+        a) AFFILIATION="$OPTARG";;
+        h) PRINT_HELP=1;;
+        ?) PRINT_HELP=1;;
+    esac
+done
 
-export FABRIC_CA_CLIENT_HOME=${CLIENT_HOME}/ca-files
+if [[ $USER -eq "" ]];then
+    PRINT_HELP=1
+fi
+if [[ $PASS -eq "" ]]; then
+    PRINT_HELP=1
+fi
+if [[ $TYPE -eq "" ]]; then
+    PRINT_HELP=1
+fi
+if [[ $AFFILIATION -eq "" ]]; then
+    PRINT_HELP=1
+fi
 
-echo -n "Enter user:"
-read USER
-echo -n "Enter pass:"
-read PASS
-echo -n "Enter type(client,orderer,peer,user):"
-read TYPE
-echo -n "Enter affiliation:"
-read AFFILIATION
-
+if [[ $PRINT_HELP -eq 1 ]]; then
+    echo "Usage: `basename $0` -u -p -t -a"
+    echo "    -u register user"
+    echo "    -p register password"
+    echo "    -t register type"
+    echo "    -a register affiliation"
+fi
+exit
 set -x
-${CLIENT_HOME}/fabric-ca-client register --id.type ${TYPE} --id.name ${USER} --id.secret ${PASS} --id.affiliation ${AFFILIATION} --id.attrs '"hf.Registrar.Roles=peer,user","hf.Revoker=true"'
+${FABRIC_CA_CLIENT_HOME}/fabric-ca-client register --id.type ${TYPE} --id.name ${USER} --id.secret ${PASS} --id.affiliation ${AFFILIATION} --id.attrs '"hf.Registrar.Roles=peer,user","hf.Revoker=true"'
 res=$?
 set +x
 if [ $res -ne 0 ]; then
@@ -24,37 +44,27 @@ fi
 echo 
 
 set -x
-${CLIENT_HOME}/fabric-ca-client enroll -u http://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/${AFFILIATION}/users/${USER}
+${FABRIC_CA_CLIENT_HOME}/fabric-ca-client enroll -u http://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/${USER}/msp
 set +x
-echo 
-
-TLS_DIR=${FABRIC_CA_CLIENT_HOME}/${AFFILIATION}/tls
-${CLIENT_HOME}/fabric-ca-client enroll -d --enrollment.profile tls -u http://${USER}:${PASS}@localhost:7054 -M ${TLS_DIR}/${USER}
+echo
 
 
 #MSP
-#-admincerts       user/signcerts/cert.pem
-#-cacerts          user/cacerts/cert.pem
-#-keystore         user/keystore/***_sk
-#-signcerts        user/signcerts/cert
-#-tlscacerts       tls/tlscacerts/*.pem
+#-msp
+#--admincerts       user/signcerts/cert.pem
+#--cacerts          user/cacerts/cert.pem
+#--keystore         user/keystore/***_sk
+#--signcerts        user/signcerts/cert
+#--tlscacerts       tls/tlscacerts/*.pem
 #-tls
 #--ca.crt          tls/tlscacerts/*.pem
 #--server.crt      tls/signcerts/cert
 #--server.key      tls/keystore/***_sk
 
-MSP_DIR=${FABRIC_CA_CLIENT_HOME}/crypto-config/${TYPE}Organizations/${AFFILIATION}/${TYPE}s/${USER}
-set -x
-mkdir -p ${MSP_DIR}/msp
-mkdir -p ${MSP_DIR}/tls
+mkdir -p ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/tlscacerts
+cp ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/cacerts/*.pem ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/tlscacerts
 
-cp -r ${FABRIC_CA_CLIENT_HOME}/${AFFILIATION}/users/${USER}/* ${MSP_DIR}/msp
-mkdir ${MSP_DIR}/msp/admincerts
-cp ${MSP_DIR}/msp/cacerts/*.pem ${MSP_DIR}/msp/admincerts
-cp -r ${TLS_DIR}/${USER}/tlscacerts ${MSP_DIR}/msp
-
-cp ${TLS_DIR}/${USER}/tlscacerts/*.pem ${MSP_DIR}/tls/ca.crt
-cp ${TLS_DIR}/${USER}/signcerts/*.pem ${MSP_DIR}/tls/server.crt
-cp ${TLS_DIR}/${USER}/keystore/*_sk ${MSP_DIR}/tls/server.key
-set +x
-
+mkdir -p ${FABRIC_CA_CLIENT_HOME}/${USER}/tls
+cp ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/cacerts/*.pem   ${FABRIC_CA_CLIENT_HOME}/${USER}/tls/ca.crt
+cp ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/signcerts/*.pem ${FABRIC_CA_CLIENT_HOME}/${USER}/tls/server.crt
+cp ${FABRIC_CA_CLIENT_HOME}/${USER}/msp/keystore/*_sk   ${FABRIC_CA_CLIENT_HOME}/${USER}/tls/server.key

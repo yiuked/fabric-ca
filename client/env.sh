@@ -1,1 +1,1 @@
-export FABIRC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client/admin
+export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client/admin
