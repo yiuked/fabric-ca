@@ -48,14 +48,20 @@ cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/cacerts/*.pem $ORDERER_DIR/ca
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/cacerts/*.pem $ORDERER_DIR/tlsca
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/cacerts/*.pem $ORDERER_DIR/msp/cacerts
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/cacerts/*.pem $ORDERER_DIR/msp/tlscacerts
-mkdir -p cp $ORDERER_DIR/orderers/orderer.36sn.com/tls
+mkdir -p $ORDERER_DIR/orderers/orderer.36sn.com/tls
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/cacerts/*.pem $ORDERER_DIR/orderers/orderer.36sn.com/tls/ca.crt
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/signcerts/*.pem $ORDERER_DIR/orderers/orderer.36sn.com/tls/server.crt
 cp $ORDERER_DIR/orderers/orderer.36sn.com/msp/keystore/*_sk $ORDERER_DIR/orderers/orderer.36sn.com/tls/server.key
-mkdir -p cp $ORDERER_DIR/users/Admin@36sn.com/tls
+mkdir -p $ORDERER_DIR/users/Admin@36sn.com/tls
 cp $ORDERER_DIR/users/Admin@36sn.com/msp/cacerts/*.pem $ORDERER_DIR/users/Admin@36sn.com/tls/ca.crt
 cp $ORDERER_DIR/users/Admin@36sn.com/msp/signcerts/*.pem $ORDERER_DIR/users/Admin@36sn.com/tls/server.crt
 cp $ORDERER_DIR/users/Admin@36sn.com/msp/keystore/*_sk $ORDERER_DIR/users/Admin@36sn.com/tls/server.key
+
+mkdir -p $ORDERER_DIR/orderers/orderer.36sn.com/msp/admincerts
+mkdir -p $ORDERER_DIR/users/Admin@org1.36sn.com/msp/admincerts
+cp $ORDERER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $ORDERER_DIR/msp/admincerts
+cp $ORDERER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $ORDERER_DIR/orderers/orderer.36sn.com/msp/admincerts
+cp $ORDERER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $ORDERER_DIR/users/Admin@org1.36sn.com/msp/admincerts
 
 mkdir -p $PEER_DIR/ca
 mkdir -p $PEER_DIR/msp
@@ -100,11 +106,18 @@ cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/ca
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/tlsca
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/msp/cacerts
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/msp/tlscacerts
-mkdir -p cp $PEER_DIR/peers/peer0.org1.36sn.com/tls
+mkdir -p $PEER_DIR/peers/peer0.org1.36sn.com/tls
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/peers/peer0.org1.36sn.com/tls/ca.crt
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/signcerts/*.pem $PEER_DIR/peers/peer0.org1.36sn.com/tls/server.crt
 cp $PEER_DIR/peers/peer0.org1.36sn.com/msp/keystore/*_sk $PEER_DIR/peers/peer0.org1.36sn.com/tls/server.key
-mkdir -p cp $PEER_DIR/users/Admin@org1.36sn.com/tls
+mkdir -p $PEER_DIR/users/Admin@org1.36sn.com/tls
 cp $PEER_DIR/users/Admin@org1.36sn.com/msp/cacerts/*.pem $PEER_DIR/users/Admin@org1.36sn.com/tls/ca.crt
 cp $PEER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $PEER_DIR/users/Admin@org1.36sn.com/tls/server.crt
 cp $PEER_DIR/users/Admin@org1.36sn.com/msp/keystore/*_sk $PEER_DIR/users/Admin@org1.36sn.com/tls/server.key
+
+mkdir -p $PEER_DIR/peers/peer0.org1.36sn.com/msp/admincerts
+mkdir -p $PEER_DIR/users/Admin@org1.36sn.com/msp/admincerts
+cp $PEER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $PEER_DIR/msp/admincerts
+cp $PEER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $PEER_DIR/peers/peer0.org1.36sn.com/msp/admincerts
+cp $PEER_DIR/users/Admin@org1.36sn.com/msp/signcerts/*.pem $PEER_DIR/users/Admin@org1.36sn.com/msp/admincerts
+
