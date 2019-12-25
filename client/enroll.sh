@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export FABRIC_CA_CLIENT_HOME=/home/vagrant/fabric-ca/client
+. ./base.sh
 
 echo -n "Enter user:"
 read USER
@@ -14,16 +14,16 @@ for i in "$*"; do
     case $i in
       --tls)
       HTTP="https"
-      TLS="--tls.certfiles=${FABRIC_CA_CLIENT_HOME}/msp/cacerts/localhost-7054.pem"
+      TLS="--tls.certfiles=${FABRIC_CA_CLIENT_HOME}/users/admin/msp/cacerts/localhost-7054.pem"
       ;;
     esac
 done
 
 set -x
-./fabric-ca-client enroll -u ${HTTP}://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/${USER}/msp ${TLS}
+./fabric-ca-client enroll -u ${HTTP}://${USER}:${PASS}@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/users/${USER}/msp ${TLS}
 res=$?
 set +x
 
 if [ $res -ne 0 ];then
-    rm -rf ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client-config.yaml ${FABRIC_CA_CLIENT_HOME}/${USER}/msp
+    rm -rf ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client-config.yaml ${FABRIC_CA_CLIENT_HOME}/users/${USER}
 fi
