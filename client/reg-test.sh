@@ -2,6 +2,28 @@
 
 . ./base.sh
 
+CA_PID=0
+
+function Start(){
+	SERVER_DIR=${FABRIC_CA_CLIENT_HOME}/../server
+	rm -rf ${SERVER_DIR}/logs
+	mkdir -p ${SERVER_DIR}/logs
+	${SERVER_DIR}/fabric-ca-server start -b admin:admin --cfg.affiliations.allowremove --cfg.identities.allowremove -H ${SERVER_DIR}/ca-files>${SERVER_DIR}/logs/server.log &
+	CA_PID=$!
+}
+
+function Admin(){
+    rm -rf ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client-config.yaml ${FABRIC_CA_CLIENT_HOME}/users/admin
+    ${FABRIC_CA_CLIENT_HOME}/fabric-ca-client enroll -u http://admin:admin@localhost:7054 -M ${FABRIC_CA_CLIENT_HOME}/users/admin/msp
+}
+
+function Stop() {
+  if [ CA_PID -gt 0 ];then
+    kill -9 CA_PID
+  fi
+}
+
+
 # $1 user
 # $2 password
 # $3 type
@@ -87,5 +109,8 @@ function RegisterNode(){
     
 }
 
+Start
+Admin
 RegisterNode orderer.36sn.com abc123 orderer 36sn.com ORDERER
 RegisterNode peer0.org1.36sn.com abc123 peer org1.36sn.com PEER
+Stop
